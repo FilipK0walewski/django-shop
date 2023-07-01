@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ product.name }}</h2>
+
+<div class="flex space-x">
+
+    <div class="product-images space-y">
+
+        <div class="product-image-container">
+            <img id="big-image" class="product-image" src="{{product.image_set.first}}" alt="">
+        </div>
+
+        <ul id="image-list" class="image-list space-x">
+            {% for image in product.image_set.all %}
+            <li class="image-container">
+                <img class="product-image" src="{{image}}" alt="">
+            </li>
+            {% endfor %}
+        </ul>
+        <button id="previous-image">previous image</button>
+        <button id="next-image">next image</button>
+    </div>
+
+    <div class="product-info space-x">
+
+        <ul>
+            <li>cena: {{ product.price }}zl</li>
+            <li>producent: {{ product.manufacturer}} </li>
+            <li>produkt: {{ product.product_id }}</li>
+            <li>ean: {{ product.ean }}</li>
+            <li>kolor: {{ product.color }}</li>
+        </ul>
+
+        <form method="POST" action="{% url 'cart' %}">
+            {% csrf_token %}
+            <input type="text" name="product" value="{{ product.id }}" required style="display: none;">
+            <input type="number" placeholder="ilosc" min="1" max="{{ product.quantity }}" name="quantity" required>
+            <button>dodaj do koszyka</button>
+        </form>
+
+    </div>
+
+</div>
+
+<div class="product-description">
+    {{product.description|safe}}
+</div>
+
+{% endblock %}

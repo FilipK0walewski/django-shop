@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Koszyk{% endblock %}
+
+{% block content %}
+
+<h1>Twoj koszyk</h1>
+{% if cart.items|length == 0 %}
+<p>koszuk jest pusty</p>
+{% else %}
+
+{% for key, value in cart.items %}
+Key: {{ key }}
+Value: {{ value }}
+{% endfor %}
+
+{% endif %}
+
+{% endblock %}

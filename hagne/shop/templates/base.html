@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}My amazing site{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+
+</head>
+
+<body>
+    <header>
+        <a href="{% url 'home' %}">strona domowa</a>
+
+        {% block midheader %}
+        <form method="GET" action="{% url 'search' %}" class="flex">
+            <input required id="search" type="text" name="q">
+            <button type="submit">wyszukaj</button>
+        </form>
+        {% endblock %}
+
+        <nav>
+            <ul class="flex space-x">
+                <li><a href="{% url 'login' %}">konto</a></li>
+                <li><a href="{% url 'cart' %}">koszyk</a></li>
+            </ul>
+        </nav>
+
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{% static 'shop/js/product.js' %}"></script>
+
+</body>
+
+</html>

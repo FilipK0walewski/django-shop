@@ -1,0 +1,11 @@
+
+<main class="login-container">
+    <form class="login-form space-y" method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <label for="username">nazwa uzytkownika</label>
+        <input type="text" id="username" name="username">
+        <label for="password">haslo</label>
+        <input type="password">
+        <button>zaloguj sie</button>
+    </form>
+</main>
