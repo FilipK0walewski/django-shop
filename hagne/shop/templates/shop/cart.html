@@ -1,18 +1,38 @@
 {% extends "base.html" %}
 
+{% load custom_filters %}
+
 {% block title %}Koszyk{% endblock %}
 
 {% block content %}
 
 <h1>Twoj koszyk</h1>
-{% if cart.items|length == 0 %}
+{% if cart|length == 0 %}
 <p>koszuk jest pusty</p>
 {% else %}
 
-{% for key, value in cart.items %}
-Key: {{ key }}
-Value: {{ value }}
-{% endfor %}
+
+<ul class="space-y">
+    {% for product in products %}
+    <li class="cart-item space-x">
+        <div class="image-container image-small">
+            <img src="{{product.image_set.first}}" alt="{{product.name}}" class="product-image">
+        </div>
+        <span>{{product.name}} {{product.manufacturer}} {{product.product_id}}</span>
+        <div>
+            <span>{{cart|get_value:product.id}}</span>
+        </div>
+        <div class="cart-prices">
+            {% if cart|get_value:product.id == 1 %}
+            <span>{{product.price}} zl</span>
+            {% else %}
+            <span>{% widthratio product.price 1 2 %} zl</span>
+            <span>{{ product.price }} zl</span>
+            {% endif %}
+        </div>
+    </li>
+    {% endfor %}
+</ul>
 
 {% endif %}
 

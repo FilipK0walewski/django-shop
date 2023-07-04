@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -8,7 +9,7 @@ from .models import Product
 
 def index(request):
     products = Product.objects.all()[:1]
-    context = {"products": products}
+    context = {'products': products}
     return render(request, 'shop/index.html', context)
 
 
@@ -20,18 +21,18 @@ def detail(request, product_id):
 
 def cart(request):
     cart = request.session.get('cart', {})
-    print('cart', cart)
 
     if request.method == 'POST':
-        product_id = request.POST.get('product')
+        product_id = int(request.POST.get('product'))
         quantity = int(request.POST.get('quantity'))
-        print('test', product_id, quantity)
         if product_id not in cart:
             cart[product_id] = 0
         cart[product_id] += quantity
         request.session['cart'] = cart
-
-    return render(request, 'shop/cart.html', {'cart': cart})
+        return HttpResponseRedirect(reverse('detail', args=(product_id,)))
+    
+    products = Product.objects.filter(id__in=cart.keys())
+    return render(request, 'shop/cart.html', {'cart': cart, 'products': products})
 
 
 def search(request):

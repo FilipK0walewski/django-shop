@@ -13,21 +13,22 @@
     <div class="product-images space-y">
 
         <div class="product-image-container">
+            <button class="absolute bottom-left" id="previous-image">previous image</button>
+            <button class="absolute bottom-right" id="next-image">next image</button>
             <img id="big-image" class="product-image" src="{{product.image_set.first}}" alt="">
         </div>
 
         <ul id="image-list" class="image-list space-x">
             {% for image in product.image_set.all %}
-            <li class="image-container">
+            <li class="image-container {% if forloop.counter == 1 %} image-focused {% endif %}">
                 <img class="product-image" src="{{image}}" alt="">
             </li>
             {% endfor %}
         </ul>
-        <button id="previous-image">previous image</button>
-        <button id="next-image">next image</button>
+
     </div>
 
-    <div class="product-info space-x">
+    <div class="product-info">
 
         <ul>
             <li>cena: {{ product.price }}zl</li>
@@ -37,11 +38,15 @@
             <li>kolor: {{ product.color }}</li>
         </ul>
 
+
+        {% if product.quantity == 0 %}
+            <p class="err-msg">Brak produktu w magazynie.</p>
+        {% endif %}
         <form method="POST" action="{% url 'cart' %}">
             {% csrf_token %}
-            <input type="text" name="product" value="{{ product.id }}" required style="display: none;">
-            <input type="number" placeholder="ilosc" min="1" max="{{ product.quantity }}" name="quantity" required>
-            <button>dodaj do koszyka</button>
+            <input type="number" name="product" value="{{ product.id }}" required style="display: none;">
+            <input {% if product.quantity == 0 %} disabled {% endif %} type="number" placeholder="ilosc" min="1" max="{{ product.quantity }}" name="quantity" required>
+            <button {% if product.quantity == 0 %} disabled {% endif %}>dodaj do koszyka</button>
         </form>
 
     </div>

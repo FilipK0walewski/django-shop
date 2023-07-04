@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 {% load static %}
+
 <html lang="en">
 
 <head>
@@ -14,6 +15,8 @@
     <header>
         <a href="{% url 'home' %}">strona domowa</a>
 
+        {% load custom_filters %}
+
         {% block midheader %}
         <form method="GET" action="{% url 'search' %}" class="flex">
             <input required id="search" type="text" name="q">
@@ -24,7 +27,12 @@
         <nav>
             <ul class="flex space-x">
                 <li><a href="{% url 'login' %}">konto</a></li>
-                <li><a href="{% url 'cart' %}">koszyk</a></li>
+                <li class="relative">
+                    <a href="{% url 'cart' %}">koszyk</a>
+                    {% if cart|get_items_count >= 1 %}
+                    <div class="cart-number">{{ cart|get_items_count }}</div>
+                    {% endif %}
+                </li>
             </ul>
         </nav>
 
