@@ -1,0 +1,18 @@
+{% load custom_filters %}
+<div class="flex-center align-center space-x">
+    {% if page.number > 1 %}
+    <a href="{% if current_category %}{% url 'category' current_category.id %}{% else %}{% url 'search' %}{% endif %}?{{ request.GET|search_params }}&page={{ page.previous_page_number }}">&#8592;</a>
+    {% endif %}
+    <form action="{% if current_category %}{% url 'category' current_category.id %}{% else %}{% url 'search' %}{% endif %}" method="GET" class="h-100">
+        {% if request.GET.q %}
+        <input type="text" name="q" value="{{ request.GET.q }}" class="hidden">
+        {% endif %}
+        {% if request.GET.order_by %}
+        <input type="text" name="order_by" value="{{ request.GET.order_by }}" class="hidden">
+        {% endif %}
+        <input class="page-input" type="number" name="page" min="1" max="{{ num_pages }}" value="{{ page.number }}"> z {{ num_pages }}
+    </form>
+    {% if page.number < num_pages %}
+    <a href="{% if current_category %}{% url 'category' current_category.id %}{% else %}{% url 'search' %}{% endif %}?{{ request.GET|search_params }}&page={{ page.next_page_number }}">&#8594;</a>
+    {% endif %}
+</div>

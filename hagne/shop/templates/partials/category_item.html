@@ -1,0 +1,10 @@
+<a href="{% url 'category' category.id %}" class="category-name subcategory-name">{{ category.name }} {% if category.children %} -> {% endif %}</a>
+{% if category.children %}
+  <ul class="category-childrens subcategory-children">
+    {% for child in category.children %}
+      <li>
+        {% include 'partials/category_item.html' with category=child %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

@@ -1,20 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Home page{% endblock %}
+{% load custom_filters %}
+
+{% block title %}Sklep - strona domowa{% endblock %}
 
 {% block content %}
 
-<h1>shop</h1>
-<ul>
-    {% for product in products %}
-    <li>
-        <a href="{% url 'detail' product.id %}">
-            <h3>{{ product.name }}</h3>
-            <img style="max-width: 200px" src={{product.image_set.first}} alt="">
-        </a>
-
-    </li>
-    {% endfor %}
-</ul>
+<p>Witam was w moim sklepie internetowym.</p>
 
 {% endblock %}

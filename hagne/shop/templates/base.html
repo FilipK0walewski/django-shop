@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 {% load static %}
+{% load custom_filters %}
 
 <html lang="en">
 
@@ -8,41 +9,59 @@
     <meta charset="UTF-8" />
     <title>{% block title %}My amazing site{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'shop/style.css' %}">
-
 </head>
 
 <body>
     <header>
-        <a href="{% url 'home' %}">strona domowa</a>
+        <div class="header-container">
+            <a id="logo" href="{% url 'home' %}">sklep</a>
 
-        {% load custom_filters %}
+            {% block midheader %}
+            <form method="GET" action="{% url 'search' %}" class="search-form">
+                <input required id="search" type="text" name="q" value="{{ request.GET.q }}" placeholder="czego szukasz?">
+                <button type="submit">wyszukaj</button>
+            </form>
+            {% endblock %}
 
-        {% block midheader %}
-        <form method="GET" action="{% url 'search' %}" class="flex">
-            <input required id="search" type="text" name="q">
-            <button type="submit">wyszukaj</button>
-        </form>
-        {% endblock %}
+            <nav>
+                <ul class="flex space-x">
+                    <li>
+                        <a href="{% url 'login' %}">konto</a>
+                    </li>
+                    <li class="relative">
+                        <a href="{% url 'cart' %}">koszyk</a>
+                        {% with request.session.cart|get_items_count as items_count %}
+                        <div id="cart-items-count" class="cart-number {% if items_count == 0 %} hidden {% endif %}">
+                            {{ items_count }}
+                        </div>
+                        {% endwith %}
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
-        <nav>
-            <ul class="flex space-x">
-                <li><a href="{% url 'login' %}">konto</a></li>
-                <li class="relative">
-                    <a href="{% url 'cart' %}">koszyk</a>
-                    {% if cart|get_items_count >= 1 %}
-                    <div class="cart-number">{{ cart|get_items_count }}</div>
-                    {% endif %}
-                </li>
-            </ul>
-        </nav>
-
+        <ul class="categories">
+            {% for category in categories %}
+            <li class="category-item">
+                <a href="{% url 'category' category.id %}" class="category-name">{{ category.name }}</a>
+                {% if category.children %}
+                <ul class="category-childrens">
+                    {% for child in category.children %}
+                    <li class="category-item subcategory-item">{% include 'partials/category_item.html' with category=child %}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        
     </header>
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <script src="{% static 'shop/js/product.js' %}"></script>
+    {% block scripts%}{% endblock %}
 
 </body>
 

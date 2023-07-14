@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Transakcja{% endblock %}
+
+{% block content %}
+
+<h2>Twoje dane</h2>
+
+<form action="" class="space-y">
+
+    <input id="company-checkbox" type="checkbox">
+    <label for="company-checkbox">Faktura na firme</label>
+
+    <fieldset id="company-data" class="flex-col space-y">
+        <label>Firma<input type="text" name="company" required></label>
+        <label>NIP<input type="text" name="nip" required></label>
+    </fieldset>
+
+    <fieldset class="flex-col space-y">
+        <label>Imie<input type="text" name="firstname" required></label>
+        <label>Nazwisko<input type="text" name="lastname" required></label>
+        <label>Email<input type="email" name="email" required></label>
+        <label>Adres<input type="text" name="address" required></label>
+        <label>Miasto<input type="text" name="city" required></label>
+        <label>Kod pocztowy<input type="text" name="postcode" required></label>
+        <label>Kraj<input type="text" name="country" required value="Polska" disabled></label>
+        <label>Telefon<input type="text" name="phone" required></label>
+    </fieldset>
+
+    <input id="different-addres-checkbox" type="checkbox">
+    <label for="different-addres-checkbox">Kliknij, aby wprowadzić adres dostawy</label>
+
+    <fieldset id="different-addres" class="flex-col space-y">
+        <label>Imie<input type="text" name="firstname" required></label>
+        <label>Nazwisko<input type="text" name="lastname" required></label>
+        <label>Email<input type="email" name="email" required></label>
+        <label>Adres<input type="text" name="address" required></label>
+        <label>Miasto<input type="text" name="city" required></label>
+        <label>Kod pocztowy<input type="text" name="postcode" required></label>
+        <label>Kraj<input type="text" name="country" required value="Polska" disabled></label>
+        <label>Telefon<input type="text" name="phone" required></label>
+    </fieldset>
+
+</form>
+
+{% endblock %}

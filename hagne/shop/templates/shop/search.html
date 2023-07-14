@@ -1,80 +1,142 @@
 {% extends "base.html" %}
 
+{% load static %}
+{% load custom_filters %}
+
 {% block title %}Search {{ q }}{% endblock %}
 
 {% block midheader %}
+{% with category_path|last as current_category %}
 
-{% if page|length == 0 %}
-<form method="GET" action="{% url 'search' %}" class="flex">
-    <input required id="search" type="text" name="q" value="{{ q }}">
+<form method="GET" action="{% if current_category.id %}{% url 'category' current_category.id %}{% else %}{% url 'search' %}{% endif %}" class="search-form">
+    <input required id="search" type="text" name="q" value="{{ request.GET.q }}" placeholder="czego szukasz?">
+    {% if request.GET.order_by %}
+    <input type="text" name="order_by" value="{{ request.GET.order_by }}" class="hidden">
+    {% endif %}
     <button type="submit">wyszukaj</button>
 </form>
-{% else %}
-<span>milego dnia</span>
-{% endif %}
 
+{% endwith %}
 {% endblock %}
+
 
 {% block content %}
 
-{% if page|length == 0 %}
-<p>Brak wynikw wyszukiwania dla "{{ q }}"</p>
-{% else %}
+{% with category_path|last as current_category %}
 
-<div class="search">
+<h2>{{ current_category.name }}</h2>
 
-    <form method="GET" action="{% url 'search' %}">
-        <input type="text" name="q" value="{{ q }}">
-        <select id="order" name="order_by">
-            <option value="">sortowanie</option>
-            <option value="price" {% if order_by == 'price' %}selected{% endif %}>cena rosnaco</option>
-            <option value="-price" {% if order_by == '-price' %}selected{% endif %}>cena malejaca</option>
-            <option value="name" {% if order_by == 'name' %}selected{% endif %}>A-Z</option>
-            <option value="-name" {% if order_by == '-name' %}selected{% endif %}>Z-A</option>
-        </select>
-        <button type="submit">search</button>
-    </form>
-
-    <div class="flex space-x">
-        {% if page.has_previous %}
-        <a href="{% url 'search' %}?q={{ q }}&order_by={{ order_by }}&page={{ page.previous_page_number }}">&#8592;</a>
-        {% endif %}
-        <span class="current-page">{{ page.number }} / {{ num_pages }}</span>
-        {% if page.has_next %}
-        <a href="{% url 'search' %}?q={{ q }}&order_by={{ order_by }}&page={{ page.next_page_number }}">&#8594;</a>
-        {% endif %}
-    </div>
-
-</div>
-
-<ul class="product-list">
-    {% for product in page %}
-    <li class="product-card">
-        <a href="{% url 'detail' product.id %}">
-            <div class="product-card-image-container">
-                <img class="product-card-image" style="max-width: 200px" src={{product.image_set.first}} alt="">
-            </div>
-            <h5>{{ product.name }}</h5>
-            <ul class="product-attributes">
-                <li>producent: {{ product.manufacturer }}</li>
-                <li>produkt: {{ product.product_id }}</li>
-                <li>kolor: {{ product.color }}</li>
-            </ul>
-            <span>{{ product.price }}zl</span>
-        </a>
-    </li>
+<ul class="category-path">
+    <li><a href="{% url 'home' %}">Sklep</a></li>
+    {% for path in category_path %}
+    <li><a href="{% url 'category' path.id %}">{{ path.name }}</a></li>
     {% endfor %}
 </ul>
 
-<div class="flex-center space-x">
-    {% if page.has_previous %}
-    <a href="{% url 'search' %}?q={{ q }}&order_by={{ order_by }}&page={{ page.previous_page_number }}">&#8592;</a>
-    {% endif %}
-    <span class="current-page">{{ page.number }} / {{ num_pages }}</span>
-    {% if page.has_next %}
-    <a href="{% url 'search' %}?q={{ q }}&order_by={{ order_by }}&page={{ page.next_page_number }}">&#8594;</a>
-    {% endif %}
-</div>
-{% endif %}
+<div class="w-100 flex space-x-2">
 
+    <div class="subcategories">
+        <h3>Podkategorie</h3>
+
+        {% if category_path %}
+        {% with category_path|second_to_last as second_to_last %}
+
+        {% if category_path|length > 1%}
+        <div style="margin-bottom: 1rem">Cofnij do <a href="{% url 'category' second_to_last.id %}">{{ second_to_last.name }}</a></div>
+        {% endif %}
+
+        {% if current_category.children %}
+        <ul class="space-y">
+
+            {% for children in current_category.children %}
+            <li><a href="{% url 'category' children.id %}">{{ children.name }}</a></li>
+            {% endfor%}
+
+            {% else %}
+            {% for children in second_to_last.children %}
+            <li>
+                <a class="{% if children.id == current_category.id %}currnet-category{% endif %}" href="{% url 'category' children.id %}">
+                    {{ children.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% else %}
+        <ul class="space-y">
+            {% for category in categories %}
+            <li><a href="{% url 'category' category.id %}?{{ request.GET|search_params }}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- <hr> -->
+        <!-- <label><input type="checkbox">pokazuj tylko dostepne</label> -->
+    </div>
+
+    <div class="search-result">
+
+        {% if page|length == 0 %}
+        <p>Brak wynikow wyszukiwania dla "{{ request.GET.q }}" w kategorii "{{ current_category.name }}".</p>
+        {% else %}
+        <div class="order-pagination">
+            {% with category_path|last as current_category %}
+
+            <form class="nice-select" id="order-form" action="{% if current_category.id %}{% url 'category' current_category.id %}{% else %}{% url 'search' %}{% endif %}" method="GET">
+                <label for="order">sortowanie</label>
+                {% with request.GET.order_by as order_by %}
+                <select id="order" name="order_by" type="submit">
+                    <option value="price" {% if not order_by or order_by == 'price' %}selected{% endif %}>cena rosnaco</option>
+                    <option value="-price" {% if order_by == '-price' %}selected{% endif %}>cena malejaca</option>
+                    <option value="name" {% if order_by == 'name' %}selected{% endif %}>A-Z</option>
+                    <option value="-name" {% if order_by == '-name' %}selected{% endif %}>Z-A</option>
+                </select>
+                {% endwith %}
+                {% if request.GET.q %}
+                <input type="text" name="q" value="{{ request.GET.q }}" class="hidden">
+                {% endif %}
+            </form>
+
+            {% include 'partials/pagination.html' %}
+
+        </div>
+
+        <ul class="product-list">
+            {% for product in page %}
+            <li class="product-card">
+                <a href="{% url 'detail' product.id %}" style="text-decoration: none;">
+                    <div class="image-container w-100">
+                        <img class="product-image image-medium" style="max-width: 200px" src="{{ product.image_set.first.downloaded }}" alt="">
+                    </div>
+                    <div class="p-1">
+                        <h5>{{ product.name }}</h5>
+                        <div style="display: flex; justify-content: space-between">
+                            <span>{{ product.price }}zl</span>
+                            {% if product.quantity == 0 %}
+                                <span style="color: var(--red-0)">brak</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% include 'partials/pagination.html' %}
+
+        {% endwith %}
+        {% endif %}
+
+
+        
+
+    </div>
+</div>
+
+{% endwith %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'shop/js/search.js' %}"></script>
 {% endblock %}

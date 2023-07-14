@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'celery',
     'shop'
 ]
 
@@ -121,8 +122,34 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# set the celery broker url
+CELERY_BROKER_URL = 'redis://localhost:6379'
+  
+# set the celery result backend
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+  
+# set the celery timezone
+CELERY_TIMEZONE = 'UTC'
+
+CELERY_BEAT_SCHEDULE = {
+    'update-products': {
+        'task': 'shop.tasks.update_products',
+        'schedule': 3600.0,
+    },
+    'download-images': {
+        'task': 'shop.tasks.download_images',
+        'schedule': 600.0,
+    },
+    'update-stock': {
+        'task': 'shop.tasks.update_stock',
+        'schedule': 600.0,
+    },
+}

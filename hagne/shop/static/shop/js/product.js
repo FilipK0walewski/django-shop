@@ -1,6 +1,9 @@
 const bigImage = document.getElementById('big-image')
 const nextImage = document.getElementById('next-image')
 const previousImage = document.getElementById('previous-image')
+const incrementQuantity = document.getElementById('increment-quantity')
+const decrementQuantity = document.getElementById('decrement-quantity')
+const productQuantity = document.getElementById('product-quantity')
 
 let imageIndex = 0
 const imageList = document.getElementById('image-list')
@@ -39,20 +42,6 @@ previousImage.addEventListener('click', () => {
     bigImage.src = imageList.children[imageIndex].children[0].src
 })
 
-// const addToCart = document.getElementById('add-to-cart')
-
-// addToCart.addEventListener('click', () => {
-//     const segments = window.location.href.split('/')
-//     const productId = segments[segments.length - 2]
-
-//     const csrftoken = document.cookie.split('csrftoken=')[1].split(';')[0]
-//     console.log(csrftoken)
-//     fetch('/cart/', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'X-CSRFToken': csrftoken
-//         },
-//         body: JSON.stringify({ quantity: 1, id: productId })
-//     })
-// })
+incrementQuantity.addEventListener('click', () => {
+    productQuantity.value = parseInt(productQuantity.value) + 1
+})

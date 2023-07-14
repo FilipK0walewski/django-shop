@@ -1,27 +1,35 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
 
+<ul class="category-path">
+    <li><a href="{% url 'home' %}">Sklep</a></li>
+    {% for path in category_path %}
+    <li><a href="{% url 'category' path.id %}">{{ path.name }}</a></li>
+    {% endfor %}
+</ul>
+
 <h2>{{ product.name }}</h2>
 
-<div class="flex space-x">
+<div class="flex space-x-2">
 
     <div class="product-images space-y">
 
         <div class="product-image-container">
-            <button class="absolute bottom-left" id="previous-image">previous image</button>
-            <button class="absolute bottom-right" id="next-image">next image</button>
-            <img id="big-image" class="product-image" src="{{product.image_set.first}}" alt="">
+            <button id="previous-image">&#8592;</button>
+            <button id="next-image">&#8594;</button>
+            <img id="big-image" class="product-image" src="{{ product.image_set.first.downloaded.url }}" alt="">
         </div>
 
         <ul id="image-list" class="image-list space-x">
             {% for image in product.image_set.all %}
-            <li class="image-container {% if forloop.counter == 1 %} image-focused {% endif %}">
-                <img class="product-image" src="{{image}}" alt="">
+            <li class="image-container h-100 {% if forloop.counter == 1 %} image-focused {% endif %}">
+                <img class="product-image" src="{{ image.downloaded.url }}" alt="">
             </li>
             {% endfor %}
         </ul>
@@ -37,17 +45,30 @@
             <li>ean: {{ product.ean }}</li>
             <li>kolor: {{ product.color }}</li>
         </ul>
+        <hr>
 
+        {% if product.id|to_string in request.session.cart %}
+            <p class="err-msg">ten produkt jest juz w koszyku.</p>
+        {% endif %}
 
         {% if product.quantity == 0 %}
             <p class="err-msg">Brak produktu w magazynie.</p>
-        {% endif %}
-        <form method="POST" action="{% url 'cart' %}">
+        {% else %}
+
+        <p>Liczba sztuk</p>
+
+        <form id="product-form" class="space-y" method="POST" action="{% url 'cart' %}" >
             {% csrf_token %}
+            <fieldset class="product-quantity">
+                <button id="derement-quantity">-</button>
+                <input id="product-quantity" type="number" min="1" max="{{ product.quantity }}" name="quantity" value="1" required>
+                <button id="increment-quantity">+</button>
+                <span>z {{ product.quantity }}</span>
+            </fieldset>
             <input type="number" name="product" value="{{ product.id }}" required style="display: none;">
-            <input {% if product.quantity == 0 %} disabled {% endif %} type="number" placeholder="ilosc" min="1" max="{{ product.quantity }}" name="quantity" required>
-            <button {% if product.quantity == 0 %} disabled {% endif %}>dodaj do koszyka</button>
+            <button type="submit">dodaj do koszyka</button>
         </form>
+        {% endif %}
 
     </div>
 
@@ -57,4 +78,8 @@
     {{product.description|safe}}
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'shop/js/product.js' %}"></script>
 {% endblock %}
