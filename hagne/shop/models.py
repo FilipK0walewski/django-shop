@@ -66,6 +66,14 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
+class ProductComment(models.Model):
+
+    text = models.CharField(max_length=255, default="Fajne.")    
+    rating = models.IntegerField(default=5)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 class Image(models.Model):
 

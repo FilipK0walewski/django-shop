@@ -7,6 +7,7 @@
     --font-0: #020617;
 
     --red-0: red;
+    --green-0: green;
 
     --color-0: #4338ca;
     --color-1: #6366f1;
@@ -52,6 +53,11 @@ button:hover {
     background-color: var(--color-1);
 }
 
+.btn-0 {
+    padding: .5rem;
+    font-size: medium;
+}
+
 h1,
 h2,
 h3,
@@ -77,8 +83,8 @@ fieldset {
 ul {
     padding: 0 !important;
     margin: 0 !important;
-    list-style-type: none;
-    list-style-position: outside;
+    list-style-type: none !important;
+    list-style-position: outside !important;
 }
 
 p {
@@ -307,6 +313,24 @@ select {
     /* background-color: rebeccapurple; */
 }
 
+.comments {
+    width: 100%;
+    background-color: var(--bg-0);
+    margin-top: 1rem;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.comments textarea {
+    min-width: 100%;
+}
+
+.comments button {
+    margin-top: .5rem;
+    padding: .5rem;
+    align-items: right;
+}
+
 .product-description {
     width: 100%;
     background-color: var(--bg-0);
@@ -316,6 +340,8 @@ select {
     padding: 1rem;
     box-sizing: border-box;
 }
+
+
 
 .product-description ul {
     list-style-type: disc;
@@ -595,8 +621,7 @@ input[type="number"]::-moz-number-spin-box {
     transform: translateY(-50%);
 }
 
-#product-form {
-}
+#product-form {}
 
 .product-quantity {
     height: 45px;
@@ -630,4 +655,81 @@ input[type="number"]::-moz-number-spin-box {
     height: 45px;
     font-size: large;
     width: 100%;
+}
+
+#cart-list li {
+    border-bottom: 2px solid var(--bg-3);
+}
+
+.form-0 {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-0 > *+* {
+    margin-top: .5rem;
+}
+
+.form-0 button {
+    width: max-content;
+    padding: .5rem;
+}
+
+.form-group {
+    position: relative !important;
+}
+
+.form-label {
+    position: absolute;
+    top: 50%;
+    left: .5rem;
+    transform: translate(0, -40%);
+    font-size: small;
+    background-color: var(--bg-0);
+}
+
+.form-input {
+    padding: .5rem;
+    border: 1px solid var(--font-0);
+}
+
+.form-input:focus {
+    border: 1px solid var(--color-0);
+}
+
+.form-input:focus + .form-label {
+    top: 0;
+    left: 2px;
+    padding: 0 5px;
+}
+
+.form-input:not(:placeholder-shown) + .form-label {
+    top: 0;
+    left: 2px;
+    padding: 0 5px;
+}
+
+.single-container {
+    background-color: var(--bg-0);
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+}
+
+.error {
+    color: var(--red-0);
+}
+
+.success {
+    color: var(--green-0);
+}
+
+.messages {
+    padding: 1rem !important;
+    box-sizing: border-box;
+    list-style-type: disc !important;
+    list-style-position: inside !important;
 }

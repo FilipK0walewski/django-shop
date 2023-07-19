@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Sklep - konto{% endblock %}
+
+{% block content %}
+
+<div class="single-container space-y">
+
+<h3>Rejestracja</h3>
+
+<form class="form-0 space-y" method="POST" action="{% url 'registration' %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <input id="username" name="username" type="text" class="form-input" placeholder="" required>
+        <label for="username" class="form-label">anzwa uzytkownika</label>
+    </div>
+    <div class="form-group">
+        <input id="email" name="email"  type="email" class="form-input" placeholder="" required>
+        <label for="email" class="form-label">email</label>
+    </div>
+    <div class="form-group">
+        <input id="password0" name="password0"  type="password" class="form-input" placeholder="" required>
+        <label for="password0" class="form-label">haslo</label>
+    </div>
+    <div class="form-group">
+        <input id="password1" name="password1"  type="password" class="form-input" placeholder="" required>
+        <label for="password1" class="form-label">powtorz haslo</label>
+    </div>
+    <button>utworz konto</button>
+</form>
+
+{% if messages %}
+<ul class="messages" style="margin: .5rem 0;">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<p>Masz juz konto?</p><a href="{% url 'login' %}">zaloguj sie</a>
+
+</div>
+
+{% endblock %}

@@ -6,18 +6,23 @@
 
 {% block content %}
 
+<div style="background-color: var(--bg-0); padding: 1rem !important; box-sizing: border-box;">
+
 <h1>Twoj koszyk</h1>
 {% if cart.items|length == 0 %}
 <p>koszyk jest pusty.</p>
 {% else %}
 <ul id="cart-list" class="space-y"></ul>
-<div class="cart-buttons">
+<div id="cart-sum" class="cart-buttons">
     <span>suma: <span id="total-price">-</span>zl</span>
     <form method="GET" action="{% url 'submit-cart' %}" onsubmit="submitCart()">
-        <button id="submit-button">dostawa</button>
+        <button id="submit-button" class="btn-0">dostawa</button>
     </form>
 </div>
+
 {% endif %}
+
+</div>
 
 {% endblock %}
 

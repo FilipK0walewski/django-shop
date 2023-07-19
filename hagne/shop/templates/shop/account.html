@@ -4,6 +4,9 @@
 
 {% block content %}
 
-<p>Brak mozliwosci utwozenia konta.</p>
+{% if request.user.is_authenticated is True %}
+<p>Jestes zalogowany jako {{ request.user }}.</p>
+<a href="{% url 'logout' %}">wyloguj sie</a>
+{% endif %}
 
 {% endblock %}

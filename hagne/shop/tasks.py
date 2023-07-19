@@ -119,7 +119,7 @@ def update_products():
             if parent is not None:
                 parent_id = db_category_map[parent]
             
-            category, created = Category.objects.get_or_create(**{'name': category_name})
+            category, _ = Category.objects.get_or_create(name=category_name, parent=parent_id)
             db_category_map[category_name] = category
 
     print('updating products')
@@ -127,10 +127,7 @@ def update_products():
     for product_id, product_data in products.items():
         tmp = product_data['category']
         product_data['category'] = db_category_map[tmp]
-        product, created = Product.objects.update_or_create(
-            defaults=product_data,
-            **{'product_id': product_id}
-        )
+        product, created = Product.objects.update_or_create(defaults=product_data, product_id=product_id)
         db_product_map[product_id] = product
 
     print('updating images')

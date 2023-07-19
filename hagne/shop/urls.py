@@ -5,7 +5,10 @@ from . import views
 # app_name = 'shop'
 urlpatterns = [
     path('', views.index, name='home'),
-    path('account/', views.account, name='login'),
+    path('account/', views.account, name='account'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('registration/', views.registration, name='registration'),
 
     path('search/', views.search, name='search'),
     path('search/<int:category_id>', views.category, name='category'),
@@ -20,4 +23,5 @@ urlpatterns = [
     path('transaction/<str:transaction_id>/order/', views.get_transaction_order, name='transaction-order'),
 
     path('product/<int:product_id>/', views.detail, name='detail'),
+    path('product/<int:product_id>/comment/', views.detail, name='comment-product'),
 ]

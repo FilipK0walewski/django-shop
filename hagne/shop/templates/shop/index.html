@@ -6,6 +6,18 @@
 
 {% block content %}
 
-<p>Witam was w moim sklepie internetowym.</p>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="single-container">
+    <p>Witam was w moim sklepie internetowym.</p>
+    <p>Sklep zostanie otwarty juz niedlugo.</p>
+</div>
+
 
 {% endblock %}

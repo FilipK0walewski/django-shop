@@ -23,13 +23,16 @@
         <div class="product-image-container">
             <button id="previous-image">&#8592;</button>
             <button id="next-image">&#8594;</button>
-            <img id="big-image" class="product-image" src="{{ product.image_set.first.downloaded.url }}" alt="">
+            <img id="big-image" class="product-image"
+                src="{% if product.image_set.first.downloaded %}{{ product.image_set.first.downloaded.url }}{% else %}{{ product.image_set.first.url }}{% endif %}">
         </div>
 
         <ul id="image-list" class="image-list space-x">
             {% for image in product.image_set.all %}
             <li class="image-container h-100 {% if forloop.counter == 1 %} image-focused {% endif %}">
-                <img class="product-image" src="{{ image.downloaded.url }}" alt="">
+                <img class="product-image"
+                    src="{% if image.downloaded %}{{ image.downloaded.url }}{% else %}{{ image.url }}{% endif %}"
+                    alt="">
             </li>
             {% endfor %}
         </ul>
@@ -48,20 +51,21 @@
         <hr>
 
         {% if product.id|to_string in request.session.cart %}
-            <p class="err-msg">ten produkt jest juz w koszyku.</p>
+        <p class="err-msg">ten produkt jest juz w koszyku.</p>
         {% endif %}
 
         {% if product.quantity == 0 %}
-            <p class="err-msg">Brak produktu w magazynie.</p>
+        <p class="err-msg">Brak produktu w magazynie.</p>
         {% else %}
 
         <p>Liczba sztuk</p>
 
-        <form id="product-form" class="space-y" method="POST" action="{% url 'cart' %}" >
+        <form id="product-form" class="space-y" method="POST" action="{% url 'cart' %}">
             {% csrf_token %}
             <fieldset class="product-quantity">
-                <button id="derement-quantity">-</button>
-                <input id="product-quantity" type="number" min="1" max="{{ product.quantity }}" name="quantity" value="1" required>
+                <button id="decrement-quantity">-</button>
+                <input id="product-quantity" type="number" min="1" max="{{ product.quantity }}" name="quantity"
+                    value="1" required>
                 <button id="increment-quantity">+</button>
                 <span>z {{ product.quantity }}</span>
             </fieldset>
@@ -74,8 +78,27 @@
 
 </div>
 
+{% if product.description|length > 1 %}
 <div class="product-description">
-    {{product.description|safe}}
+    {{ product.description|safe }}
+</div>
+{% endif %}
+
+<div class="comments space-y">
+    {% if comments %}
+        <ul>
+            {% for comment in comments %}
+            <li></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+    <p>Brak opini</p>
+    {% endif %}
+
+    <form method="POST" action="{% url 'comment-product' product.id %}">
+        <textarea name="text" id="" maxlength="255"></textarea>
+        <button>dodaj opinie</button>
+    </form>
 </div>
 
 {% endblock %}

@@ -1,15 +1,15 @@
-import json
-import uuid
-
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render 
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
 
-from .models import Product, Image, Category
+from .models import Product, Image, Category, ProductComment
 from .utils import get_category_path, get_subcategories
 
 
@@ -66,7 +66,8 @@ def detail(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     categories = Category.objects.get_category_tree()
     category_path = get_category_path(categories, product.category_id)
-    return render(request, 'shop/product.html', {'product': product, 'categories': categories, 'category_path': category_path})
+    comments = ProductComment.objects.filter(product_id=product_id)
+    return render(request, 'shop/product.html', {'product': product, 'categories': categories, 'category_path': category_path, 'comments': comments})
 
 
 def cart(request):
@@ -162,7 +163,66 @@ def decrement_cart_item(request, product_id):
 
 
 def account(request):
+    if request.user.is_authenticated is False:
+        return redirect('login')
+
+    return render(request, 'shop/account.html')
+
+
+def login_view(request):
     if request.method == 'GET':
-        return render(request, 'shop/account.html')
-        
-    return HttpResponse('post')
+        return render(request, 'shop/login.html')
+
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['GET', 'POST'])
+
+    username = request.POST["username"]
+    password = request.POST["password"]
+    user = authenticate(request, username=username, password=password)
+
+    if user is not None:
+        login(request, user)
+        messages.add_message(request, messages.SUCCESS, f'Zalogowano jako {user.get_username()}.')
+        return HttpResponseRedirect(reverse('home'))
+    else:
+        messages.add_message(request, messages.ERROR, 'Niepoprawne dane logowania.')
+        return HttpResponseRedirect(reverse('login'))
+
+
+def logout_view(request):
+    logout(request)
+    messages.add_message(request, messages.SUCCESS, f'Wylogowano.')
+    return HttpResponseRedirect(reverse('home'))
+
+
+def registration(request):
+    if request.method == 'GET':
+        return render(request, 'shop/registration.html')
+
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['GET', 'POST'])
+
+    username = request.POST.get('username', None)
+    email = request.POST.get('email', None)
+    password0 = request.POST.get('password0', None)
+    password1 = request.POST.get('password1', None)
+
+    if username is None:
+        messages.add_message(request, messages.ERROR, 'Niepoprawna nazwa uzytkownika.')
+        return HttpResponseRedirect(reverse('registration'))
+
+    if email is None:
+        messages.add_message(request, messages.ERROR, 'Niepoprawny email.')
+        return HttpResponseRedirect(reverse('registration'))
+
+    if password0 != password1:
+        messages.add_message(request, messages.ERROR, 'Hasla nie sa takie same.')
+        return HttpResponseRedirect(reverse('registration'))
+
+    if User.objects.filter(username=username).exists():
+        messages.add_message(request, messages.ERROR, 'Uzytkownik o tej nazwie juz istnieje.')
+        return HttpResponseRedirect(reverse('registration'))
+
+    User.objects.create_user(username, email, password0)
+    messages.add_message(request, messages.SUCCESS, 'Konto utworzone. Mozesz sie teraz zalogowac')
+    return HttpResponseRedirect(reverse('login'))

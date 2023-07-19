@@ -39,6 +39,7 @@
         <h3>Podkategorie</h3>
 
         {% if category_path %}
+
         {% with category_path|second_to_last as second_to_last %}
 
         {% if category_path|length > 1%}
@@ -47,32 +48,35 @@
 
         {% if current_category.children %}
         <ul class="space-y">
-
             {% for children in current_category.children %}
             <li><a href="{% url 'category' children.id %}">{{ children.name }}</a></li>
             {% endfor%}
-
-            {% else %}
-            {% for children in second_to_last.children %}
-            <li>
-                <a class="{% if children.id == current_category.id %}currnet-category{% endif %}" href="{% url 'category' children.id %}">
-                    {{ children.name }}
-                </a>
-            </li>
-            {% endfor %}
         </ul>
-        {% endif %}
-        {% endwith %}
+
         {% else %}
         <ul class="space-y">
+            {% for children in second_to_last.children %}
+                <li>
+                    <a class="{% if children.id == current_category.id %}currnet-category{% endif %}" href="{% url 'category' children.id %}">
+                        {{ children.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% endif %}
+
+        {% endwith %}
+
+        {% else %}
+        <ul class="space-y">
+            
             {% for category in categories %}
             <li><a href="{% url 'category' category.id %}?{{ request.GET|search_params }}">{{ category.name }}</a></li>
             {% endfor %}
         </ul>
         {% endif %}
 
-        <!-- <hr> -->
-        <!-- <label><input type="checkbox">pokazuj tylko dostepne</label> -->
     </div>
 
     <div class="search-result">
@@ -107,7 +111,11 @@
             <li class="product-card">
                 <a href="{% url 'detail' product.id %}" style="text-decoration: none;">
                     <div class="image-container w-100">
-                        <img class="product-image image-medium" style="max-width: 200px" src="{{ product.image_set.first.downloaded }}" alt="">
+                        <img 
+                            class="product-image image-medium" 
+                            style="max-width: 200px" 
+                            src="{% if product.image_set.first.downloaded %}{{ product.image_set.first.downloaded.url }}{% else %}{{ product.image_set.first.url }}{% endif %}"
+                        >
                     </div>
                     <div class="p-1">
                         <h5>{{ product.name }}</h5>

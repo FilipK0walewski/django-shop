@@ -1,9 +1,10 @@
 const bigImage = document.getElementById('big-image')
 const nextImage = document.getElementById('next-image')
 const previousImage = document.getElementById('previous-image')
-const incrementQuantity = document.getElementById('increment-quantity')
 const decrementQuantity = document.getElementById('decrement-quantity')
+const incrementQuantity = document.getElementById('increment-quantity')
 const productQuantity = document.getElementById('product-quantity')
+const maxProductQuantity = parseInt(productQuantity.getAttribute('max'))
 
 let imageIndex = 0
 const imageList = document.getElementById('image-list')
@@ -42,6 +43,12 @@ previousImage.addEventListener('click', () => {
     bigImage.src = imageList.children[imageIndex].children[0].src
 })
 
-incrementQuantity.addEventListener('click', () => {
-    productQuantity.value = parseInt(productQuantity.value) + 1
+decrementQuantity.addEventListener('click', (e) => {
+    e.preventDefault()
+    productQuantity.value = Math.max(...[1, parseInt(productQuantity.value) - 1])
+})
+
+incrementQuantity.addEventListener('click', (e) => {
+    e.preventDefault()
+    productQuantity.value = Math.min(...[maxProductQuantity, parseInt(productQuantity.value) + 1])
 })

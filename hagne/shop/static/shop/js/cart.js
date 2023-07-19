@@ -9,11 +9,18 @@ const getCart = async () => {
     const res = await fetch('/cart/items/', { method: 'GET', headers: { 'X-CSRFToken': getCsrfToken() } })
     const data = await res.json()
 
+    if (data.cart.length === 0) {
+        cartList.innerHTML = '<p>koszyk jest pusty.</p>'
+        document.getElementById('cart-sum').classList.add('hidden')
+        return
+    }
+
     cartData = {}
     cartList.innerHTML = ''
 
     let totalPrice = 0
     for (let item of data.cart) {
+        const itemSum = (parseInt(item.price * item.quantity * 100) / 100).toFixed(2)
         const itemHtml = `
             <li id="${item.id}" class="cart-item">
                 <div class="cart-item-image-name space-x">
@@ -31,10 +38,10 @@ const getCart = async () => {
                         <button ${item.stock === item.quantity ? 'disabled' : null} onclick="incrementQuantity(${item.id})" class="increment">+</button>
                     </div>
                     <div class="product-price">
-                        <span><span class="multi-price">${item.price * item.quantity}</span> zl</span>
-                        <span class="single-price">${item.price} zl</span>
+                        <span><span class="multi-price">${itemSum}</span> zl</span>
+                        <span class="single-price">${item.price.toFixed(2)} zl</span>
                     </div>
-                    <button onclick="deleteProduct(${item.id})" class="delete-btn">&#9851;</button>
+                    <button onclick="deleteProduct(${item.id})" class="delete-btn btn-0">&#9851;</button>
                 </div>
             </li>
         `
@@ -42,7 +49,7 @@ const getCart = async () => {
         cartData[item.id] = item
         totalPrice += item.quantity * item.price
     }
-    document.getElementById('total-price').innerHTML = parseInt(totalPrice * 100) / 100
+    document.getElementById('total-price').innerHTML = (parseInt(totalPrice * 100) / 100).toFixed(2)
 }
 
 const deleteProduct = async (id) => {
