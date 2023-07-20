@@ -1,7 +1,6 @@
 venv
+db
 **/__pycache__/
 **/images
 **/media
-**/static
 **/migrations
-celerybeat-schedule

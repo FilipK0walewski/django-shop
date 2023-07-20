@@ -1,34 +1,50 @@
 version: '3'
 services:
+  redis:
+    image: redis:alpine
   db:
     image: postgres:alpine
     volumes:
-      - ./postgres_data/db:/var/lib/postgresql/data
+      - ./db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=hagne
-      - POSTGRES_USER=hagne
-      - POSTGRES_PASSWORD=hagne
-  redis:
-    iamge: redis:alpine
+      - POSTGRES_DB=shop
+      - POSTGRES_USER=shop
+      - POSTGRES_PASSWORD=shop
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: celery -A hagne beat & celery -A hagne beat & python manage.py runserver 0.0.0.0:8000
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - static_volume:/app/hagne/static
+      - static_volume:/app/static
     ports:
-      - "8000:8000"
+      - 8000:8000
     environment:
-      - DEBUG=False
-      - DB_NAME=hagne
-      - DB_USER=hagne
-      - DB_PASSWORD=hagne
+      - DEBUG=True
+      - DB_NAME=shop
+      - DB_USER=shop
+      - DB_PASSWORD=shop
       - DB_HOST=db
       - DB_PORT=5432
-      - SECRET_KEY=your_secret
+      - SECRET_KEY=your_secret_key
     depends_on:
       - db
+      - redis
+      - celery
+      - celery-beat
+  celery:
+    build: .
+    restart: always
+    command: celery -A hagne worker -l info
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+  celery-beat:
+    build: .
+    restart: always
+    command: celery -A hagne beat -l info
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
       - redis
   nginx:
     build:

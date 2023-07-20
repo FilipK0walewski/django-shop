@@ -21,8 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False if os.environ.get('DEBUG') == 'False' else True
 
-ALLOWED_HOSTS = ['https://sklep.filipkowalewski.xyz', 'https://www.sklep.filipkowalewski.xyz']
-CSRF_TRUSTED_ORIGINS = ['https://sklep.filipkowalewski.xyz', 'https://www.sklep.filipkowalewski.xyz']
+ALLOWED_HOSTS = ['*']
+# CSRF_TRUSTED_ORIGINS = ['https://sklep.filipkowalewski.xyz', 'https://www.sklep.filipkowalewski.xyz']
 # SECURITY WARNING: don't run with debug turned on in production!
 
 INSTALLED_APPS = [
@@ -70,17 +70,25 @@ WSGI_APPLICATION = 'hagne.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+DB_NAME = os.getenv('DB_NAME', 'hagne')
+DB_USER = os.getenv('DB_USER', 'filip')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '123')
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5432')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
 }
+print(DATABASES)
+tmp = os.getenv('DB_USER')
+print(f'\n{tmp}\n')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -122,11 +130,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# set the celery broker url
-CELERY_BROKER_URL = 'redis://localhost:6379'
-  
-# set the celery result backend
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+redis_host = os.getenv('REDIS_HOST', 'localhost')
+CELERY_BROKER_URL = f'redis://{redis_host}:6379'
+CELERY_RESULT_BACKEND = f'redis://{redis_host}:6379'
   
 # set the celery timezone
 CELERY_TIMEZONE = 'UTC'
