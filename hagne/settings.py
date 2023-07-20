@@ -22,7 +22,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False if os.environ.get('DEBUG') == 'False' else True
 
 ALLOWED_HOSTS = ['*']
-# CSRF_TRUSTED_ORIGINS = ['https://sklep.filipkowalewski.xyz', 'https://www.sklep.filipkowalewski.xyz']
+# ALLOWED_HOSTS = ['sklep.filipkowalewski.xyz', 'www.sklep.filipkowalewski.xyz']
+CSRF_TRUSTED_ORIGINS = ['https://sklep.filipkowalewski.xyz', 'https://www.sklep.filipkowalewski.xyz']
 # SECURITY WARNING: don't run with debug turned on in production!
 
 INSTALLED_APPS = [
@@ -67,7 +68,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'hagne.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DB_NAME = os.getenv('DB_NAME', 'hagne')
@@ -86,13 +86,9 @@ DATABASES = {
         'PORT': DB_PORT,
     }
 }
-print(DATABASES)
-tmp = os.getenv('DB_USER')
-print(f'\n{tmp}\n')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -144,7 +140,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     'download-images': {
         'task': 'shop.tasks.download_images',
-        'schedule': 600.0,
+        'schedule': 3600.0,
     },
     'update-stock': {
         'task': 'shop.tasks.update_stock',
