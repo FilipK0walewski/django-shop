@@ -55,7 +55,7 @@ class Product(models.Model):
         return self.product_id
 
     manufacturer = models.CharField(max_length=50)
-    product_id = models.CharField(max_length=50)
+    product_id = models.CharField(max_length=50, unique=True)
     ean = models.CharField(max_length=13)
     quantity = models.IntegerField()
     description = models.TextField()
@@ -70,7 +70,7 @@ class ProductComment(models.Model):
 
     text = models.CharField(max_length=255, default="Fajne.")    
     rating = models.IntegerField(default=5)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 

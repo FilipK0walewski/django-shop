@@ -733,3 +733,8 @@ input:focus {
     list-style-type: disc !important;
     list-style-position: inside !important;
 }
+
+.bg-0 {background-color: var(--bg-0);}
+.bg-1 {background-color: var(--bg-1);}
+.bg-2 {background-color: var(--bg-2);}
+.bg-3 {background-color: var(--bg-3);}

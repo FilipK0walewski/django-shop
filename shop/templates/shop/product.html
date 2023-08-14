@@ -5,6 +5,15 @@
 
 {% block title %}{{ product.name }}{% endblock %}
 
+{% block styles %}
+    <style>
+        .comment-list {
+            background-color: red;
+            border: 2px green solid;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 
 <ul class="category-path">
@@ -86,16 +95,23 @@
 
 <div class="comments space-y">
     {% if comments %}
-        <ul>
-            {% for comment in comments %}
-            <li></li>
-            {% endfor %}
-        </ul>
+    <ul class="comment-list">
+        {% for comment in comments %}
+        <li class="bg-1" style="background-color: var(--bg-2);">
+            <div>
+                <span>{% if comment.user %}{{ comment.user }}{% else %}Anonimowy użytkownik{% endif %}</span>
+                <span style="font-size: small;">{{ comment.created_at |date:'Y-m-d H:i' }}</span>
+            </div>
+            <p>{{ comment.text }}</p>
+        </li>
+        {% endfor %}
+    </ul>
     {% else %}
     <p>Brak opini</p>
     {% endif %}
 
     <form method="POST" action="{% url 'comment-product' product.id %}">
+        {% csrf_token %}
         <textarea name="text" id="" maxlength="255"></textarea>
         <button>dodaj opinie</button>
     </form>

@@ -23,5 +23,5 @@ urlpatterns = [
     path('transaction/<str:transaction_id>/order/', views.get_transaction_order, name='transaction-order'),
 
     path('product/<int:product_id>/', views.detail, name='detail'),
-    path('product/<int:product_id>/comment/', views.detail, name='comment-product'),
+    path('product/<int:product_id>/comment/', views.add_comment, name='comment-product'),
 ]

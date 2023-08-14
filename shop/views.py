@@ -70,6 +70,19 @@ def detail(request, product_id):
     return render(request, 'shop/product.html', {'product': product, 'categories': categories, 'category_path': category_path, 'comments': comments})
 
 
+def add_comment(request, product_id):
+    print(request.user, type(request.user))
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        product = get_object_or_404(Product, pk=product_id)
+        user = None
+        if request.user.is_authenticated:
+            user = request.user
+        comment = ProductComment(text=text, product=product, user=user)
+        comment.save()
+        return JsonResponse({'test': comment.id})
+1
+
 def cart(request):
     cart = request.session.get('cart', {'items': {}, 'step': 0})
 

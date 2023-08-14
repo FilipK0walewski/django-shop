@@ -3,12 +3,14 @@
 {% load static %}
 {% load custom_filters %}
 
-<html lang="en">
+<html lang="pl">
 
 <head>
     <meta charset="UTF-8" />
     <title>{% block title %}My amazing site{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+    {% block styles %}
+    {% endblock %}
 </head>
 
 <body>
